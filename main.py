@@ -12,7 +12,8 @@ def edit_student():
 def show_header():
     print(f"{'Mã số':<10}{'Họ tên':^20}{'giới tính':^10}{'tỉnh/Thành phố':<20}{'Điểm thi lý thuyết':>20}{'Điểm thi thực hành':>20}")
 
-def show_students_list():
+
+def show_students(condition):
     show_header()
     lst = students_list.split("\n")
     for std in lst:
@@ -23,37 +24,32 @@ def show_students_list():
         province = info[3]
         theory = info[4]
         practice = info[5]
-        print(f"{id:<10}{full_name:^20}{gender:^10}{province:<20}{theory:>20}{practice:>20}")
+        is_valid = condition(theory, practice)
+        if is_valid:
+            print(f"{id:<10}{full_name:^20}{gender:^10}{province:<20}{theory:>20}{practice:>20}")
+
+def get_all_condition(theory, practice):
+    return True
+
+def get_passed_condition(theory, practice):
+    return get_average_point(theory, practice) >= 75
+
+def get_failed_condition(theory, practice):
+    return get_average_point(theory, practice) < 75
+
+def get_average_point(theory, practice):
+    return (int(theory) + int(practice)) // 2
+
+def show_students_list():
+    show_students(get_all_condition)
+
 
 def show_passed_students():
-    show_header()
-    lst = students_list.split("\n")
-    for std in lst:
-        info = std.split(",")
-        id = info[0]
-        full_name = info[1]
-        gender = info[2]
-        province = info[3]
-        theory = info[4]
-        practice = info[5]
-        avg = (int(theory) + int(practice)) // 2
-        if avg >= 75:
-            print(f"{id:<10}{full_name:^20}{gender:^10}{province:<20}{theory:>20}{practice:>20}")
+    show_students(get_passed_condition)
+
 
 def show_failed_students():
-    show_header()
-    lst = students_list.split("\n")
-    for std in lst:
-        info = std.split(",")
-        id = info[0]
-        full_name = info[1]
-        gender = info[2]
-        province = info[3]
-        theory = info[4]
-        practice = info[5]
-        avg = (int(theory) + int(practice)) // 2
-        if avg < 75:
-            print(f"{id:<10}{full_name:^20}{gender:^10}{province:<20}{theory:>20}{practice:>20}")
+    show_students(get_failed_condition)
 
 def remove_student():
     pass
